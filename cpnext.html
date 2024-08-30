@@ -1,0 +1,896 @@
+
+ 
+Table des matières
+Résumé :	2
+Remerciements :	2
+Lexique:	3
+Introduction :	3
+Présentations de l’entreprise d’accueil:	5
+Stellantis :	5
+Stellantis Site de Sept-fons :	6
+Réseau informatique de l’entreprise :	7
+Technologies utilisés par l’entreprise :	7
+Mes technologies utilisées :	13
+Explication de l’infrastructure réseau de l’entreprise :	15
+Physique :	15
+Logique :	21
+Missions et activités :	23
+Description des missions :	23
+Enjeux et Défis de la Mission :	39
+Défis rencontrés et solutions apportées :	40
+Configuration du mode USER BASED TUNNELING (UBT) :	40
+Migration du VLAN administrateur pour les équipements Cisco :	40
+Absence de VLAN pour les points d'accès :	40
+Conclusion :	41
+Bibliographie :	41
+Annexes :	43
+Annexe1 : commutateur CX3820 :	43
+Annexe 2 : VSX, ISL et KEEPALIVE:	43
+Keepalive :	46
+Annexe 3 : commutateur CX6200, CX6300 et VSF	46
+Annexe 4 : Clearpass, Conducteur de mobilité, OpenGear	50
+Annexe 5 : UBT	52
+Glossaires :	54
+
+
+ 
+Résumé : 
+Ce mémoire présente une stratégie visant à moderniser l’infrastructure de réseau de l’entreprise STELLANTIS site de Sept-fons en intégrant la technologie Aruba pour les réseau locaux câblés.
+Les actions proposées incluent le remplacement de tous les appareils LAN câblés par des équipements Aruba, permettant ainsi l’activation des fonctionnalités Software-Defined Network (SDN). De plus l’ajout de liaison montantes 10G/40G est envisagées pour anticiper les demandes croissantes en bande passante sur le LAN
+Un accent particulier est mis sur le renforcement de la sécurité du réseau, avec la mise en œuvre des normes telles que 802.1x et Mac authentification Bypass (MAB) pour toutes les connexions. Cette approche vise à sécuriser efficacement l’accès au réseau et à protéger les données sensibles de l’entreprise.
+Une recommandation similaire à celle utilisée pour le Wi-Fi, où chaque point d’accès établit un tunnel vers un contrôleur local en mode Local User Rôle (LUR). Cette méthode permet une gestion optimale du trafic et une configuration simplifiée des périphérique réseau.
+Pour assurer une transition fluide les utilisateurs LEAGCY continueront d’accéder aux réseau sans établir de tunnel vers le contrôleur, assurant ainsi une compatibilité avec le système existant. 
+Remerciements :
+
+Je tiens à exprimer ma profonde gratitude à plusieurs personnes qui ont grandement participé à ma formation.
+Tout d’abord, je remercie sincèrement Olivier MORIN, responsable de la filiale OPEN IT de Clermont-Ferrand.
+Je tiens à remercier Clémence SOUADET, ma tutrice à l’école pour l’encouragement, le soutien et conseil pendant tout au long de l’année.
+Aussi, je remercie Denis MARCHAND, Sébastien HANEN, Claude BONNE MAISON et Guillaume PEULTIER pour leurs soutiens techniques et leurs conseils avisés.
+Je remercie également Eric DEMAY pour son accompagnement et son aide précieuse au sein de l’entreprise. Son expertise et ses conseils m’ont été d’une grande aide tout au long de mon parcours.
+Je souhaite également exprimer ma reconnaissance particulière à Eric DELECROIX, mon tuteur en entreprise. Malgré son emploi du temps chargé, il a toujours su me consacrer du temps. Il s'est toujours assuré que je ne manque de rien pour mener à bien mes missions. A ses côtés, j’ai appris bien plus que des connaissances techniques liées au réseau. Il m’a enseigné des compétences essentielles telles que le comportement en entreprise, ainsi que des domaines variés comme la robotique, l’électricité etc.
+
+Lexique:
+SDN: Software-Defined Networking
+LAN: Local Area Network
+QoS: Quality of Service
+VSX: Virtual Switching Extension
+ISL: Inter Switching Link
+VSF: Virtual Switching Framework
+VRF: Virtual Routing and Forwarding
+UBT: User Based Tunneling
+VLAN: Virtual Local Area Network
+WLAN: Wireless Local Area Network
+SD-WAN: Software-Defined Wide Area Network
+RBAC: Role Based Access Control
+PoE: Power over Ethernet
+IMC: Intelligent Management Center
+ISE: Identity Services Engine
+GRE : Genering routing encapsulation
+LT: Local Technique
+BD: Baie Déporté
+
+
+
+
+Introduction :
+Dans un monde de plus en plus connecté, les infrastructures réseau doivent constamment évoluer pour répondre aux besoins croissants en termes de performance, de sécurité et de gestion. Les réseaux LAN traditionnels, souvent rigides et complexes à administrer, peinent à suivre le rythme des innovations technologiques et des exigences des utilisateurs.
+C’est dans ce contexte que s’inscrit le projet CampusNext. Ce projet vise à moderniser et à optimiser l’infrastructure du réseau LAN existant en intégrant la technologie SDN (Software-Defined Networking). Le SDN représente une avancée majeure dans la gestion des réseaux, permettant de séparer le contrôle du réseau de l’infrastructure matérielle. Grâce à cette approche, la gestion du réseau devient plus centralisée, flexible et efficace.
+L'adoption de la technologie SDN dans le cadre du projet CampusNext répond à plusieurs impératifs. Tout d'abord, elle promet une amélioration significative des performances du réseau en permettant une gestion plus fine et dynamique du trafic. Ensuite, elle renforce la sécurité en facilitant l'implémentation de politiques de sécurité centralisées et en permettant une réponse rapide aux menaces. De plus, la flexibilité offerte par SDN permet de mieux répondre aux besoins changeants des utilisateurs et d'intégrer de nouvelles applications plus rapidement.
+En parallèle, l'ajout de liaisons montantes 10G/40G est envisagé pour anticiper les demandes croissantes en bande passante sur le LAN. Ces liaisons haute vitesse garantiront une capacité accrue et une meilleure fluidité des échanges de données, soutenant ainsi l'évolution continue des applications et des services sur le réseau. L'intégration de ces liaisons montantes, combinée avec les avantages du SDN, assurera une infrastructure réseau robuste, scalable et capable de répondre efficacement aux exigences futures du site.
+Enfin, en simplifiant la gestion du réseau, CampusNext représente une opportunité de rendre le réseau plus évolutif et prêt pour les défis futurs. En intégrant le SDN, CampusNext se positionne comme un catalyseur de transformation numérique, capable de soutenir efficacement les activités et les ambitions de son institution.
+
+Dans un site industriel où la fiabilité, la performance et la sécurité du réseau sont cruciales pour le bon fonctionnement des opérations, les infrastructures LAN traditionnelles révèlent des limites en termes de flexibilité et de gestion. Ces limitations peuvent entraver l'optimisation des processus industriels, l'intégration de nouvelles technologies et la réactivité face aux incidents. Comment moderniser et optimiser ces infrastructures pour répondre aux besoins croissants de l'industrie, tout en garantissant une sécurité renforcée ?
+Comment l'intégration de la technologie SDN (Software-Defined Networking) avec les matériels Aruba dans l'infrastructure du réseau LAN d'un site industriel peut-elle améliorer les performances, la sécurité et la gestion du réseau, tout en répondant aux exigences croissantes des processus industriels et des technologies émergentes ?
+L'objectif de ce mémoire est de répondre aux problématiques et à la question de recherche définies en fournissant une analyse approfondie et détaillée. Ce mémoire visera à :
+Évaluer les limitations des infrastructures LAN traditionnelles dans un contexte industriel et comprendre comment la technologie SDN peut y remédier.
+Explorer les avantages et les fonctionnalités de la technologie SDN lorsqu'elle est intégrée avec les équipements Aruba, en termes de performance, de sécurité et de gestion du réseau.
+Examiner l'impact de l'ajout de liaisons montantes 10G/40G sur le réseau LAN, en anticipant les demandes croissantes en bande passante et en améliorant la capacité globale du réseau pour soutenir les besoins futurs.
+En atteignant ces objectifs, ce mémoire fournira des aperçus pratiques et des solutions concrètes pour améliorer les réseaux LAN industriels, tout en offrant un livrable complet et pertinent.
+
+
+Présentations de l’entreprise d’accueil:
+Stellantis :
+Stellantis est un groupe automobile multinational fondé le 16 janvier 2021, issu de la fusion des groupes PSA Peugeot et Fiat Chrysler Automobiles (FCA). Basé aux Pays-Bas, Stellantis possède une forte présence en Europe, en Amérique du Nord et ailleurs. Le groupe commercialise quinze marques automobiles, dont Citroën, Peugeot, Fiat, Jeep, et Chrysler, ainsi que plusieurs marques de services et équipementiers. Stellantis investit dans la mobilité électrique, l'innovation technologique (comme la conduite autonome) et s'engage dans des initiatives de développement durable pour réduire son empreinte carbone et promouvoir des pratiques responsables. 
+
+
+Stellantis Site de Sept-fons :
+Sept-Fons est un site industriel de Stellantis (anciennement PSA Peugeot Citroën) situé sur la commune de Dompierre-sur-Besbre.
+Il s'agit d'une fonderie de ferreux à Dompierre-sur-Besbre (Allier) qui produit des pièces en fontes grises (carters de moteur et pièces de freinages) qu'elle livre aux autres usines de mécaniques du groupe.
+L'usine d'environ 600 salariés fabrique environ 40 000 pièces par jour.
+Parc matières : 
+C'est la zone où sont stockées les matières premières utilisées dans le processus de production. Il peut s'agir de différents types de métaux et d'autres matériaux nécessaires à la fonderie.
+Fusion : 
+Ce secteur est dédié à la fusion de la fonte. Cela se fait à l'aide du cubilot, un four vertical de 23 mètres de haut, et de 2 fours électrique, où les matériaux sont chauffés à des températures élevées jusqu'à ce qu'ils atteignent un état liquide.
+Moulage et noyautage des PF et (5.) CC :
+Dans cette zone, les moules et les noyaux sont fabriqués pour créer des pièces de freinage et des carters cylindres en métal. Les moules sont utilisés pour donner la forme souhaitée aux pièces, tandis que les noyaux sont utilisés pour créer des cavités internes dans les pièces.
+Sablerie :
+Il s'agit d'un secteur où le sable est préparé, nettoyé et mélangé pour générer des moules à partir de modèles préexistants. Le sable est compacté autour du modèle, puis la pièce est retirée, laissant un moule prêt à être utilisé dans le processus de moulage.
+Finition PF et (8.) CC : 
+Dans cette étape, les pièces moulées sont nettoyées, contrôlées et préparées pour la prochaine phase de production. Cela peut impliquer des opérations telles que le polissage, l'ébavurage des bords rugueux et la suppression des imperfections.
+Usinage-Peinture : 
+Ce secteur comprend les opérations d'usinage des pièces, où elles sont façonnées, percées et usinées selon les spécifications requises. Ensuite, les pièces peuvent être envoyées dans la zone de peinture pour être revêtues d'une couche protectrice et esthétique.
+Expédition : 
+Une fois que les pièces sont entièrement fabriquées et inspectées, elles sont préparées et emballées pour l'expédition aux clients (en- pièce de rechange) ou à d'autres sites de production de STELLANTIS.
+Régénération Sable : 
+Dans cette zone, le sable utilisé dans le processus de moulage est récupéré, nettoyé et régénéré afin de pouvoir être réutilisé pour les noyaux dans les cycles de production ultérieurs. Cela permet de réduire les déchets et de maintenir une utilisation efficace des ressources.
+Station d'épuration :
+Cette installation est chargée de traiter les eaux usées générées par les différentes étapes de production. Elle vise à éliminer les contaminants et à assurer un rejet d'eau conforme aux normes environnementales.
+Réseau informatique de l’entreprise :
+Technologies utilisés par l’entreprise :
+Commutateur CX 8320:
+Le commutateur CX3820 est un équipement réseau clé pour les environnements professionnels, assurant une communication rapide et fiable entre les appareils d'un réseau local (LAN). Il optimise la gestion du trafic, minimise les pertes de données et permet la création de sous-réseaux (VLAN) pour améliorer la sécurité. Doté de plusieurs ports, il supporte la gestion de la qualité de service (QoS) pour les applications critiques, offre des interfaces avancées pour la configuration et la surveillance, et intègre des fonctionnalités de sécurité pour protéger le réseau.
+Annexe1
+
+Aruba VSX Virtual Switching Extension:
+Aruba Virtual Switching Extension (VSX) est une technologie de virtualisation pour les commutateurs d'agrégation et les commutateurs AOS-CX centraux. La solution VSX permet aux commutateurs de se présenter comme un seul commutateur virtualisé dans les zones critiques.
+Elle assurer une haute disponibilité du réseau, permettre une maintenance sans interruption, optimiser les performances, offrir une grande flexibilité, et simplifier la gestion des commutateurs en réseau. Elle garantit ainsi un réseau plus résilient et efficace.
+VSX est pris en charge dans les séries de commutateurs AOS-CX 6400, AOS-CX 8320 et AOS-CX 8325.
+Aruba Central fournit une prise en charge de VSX en affichant des informations sur les configurations des commutateurs et l'état de la liaison inter-commutateurs (ISL) entre les commutateurs.
+Annexe 2.
+Aruba ISL Inter Switch Link:
+Dans la topologie VSX, une liaison inter-commutateurs (ISL) est une interface de couche 2 reliant deux commutateurs homologues VSX. Cette liaison, essentielle pour le transfert de trafic et l'échange de protocoles de contrôle, est automatiquement incluse dans tous les VLAN du périphérique, bien que son appartenance puisse être modifiée via la ligne de commande. L'ISL permet le transfert natif du trafic sans encapsulation supplémentaire et prend en charge les paquets surdimensionnés, avec un MTU réglé automatiquement. Elle assure la synchronisation des données critiques entre les commutateurs, telles que les tables ARP et MAC, et les états LACP et MSTP. Tous les ports ISL doivent fonctionner à la même vitesse, avec une préférence pour les vitesses de 40 G et 100 G.
+Annexe 2.
+
+Keepalive :
+En cas de panne de l'ISL, les commutateurs VSX utilisent leur connexion keepalive pour déterminer si les deux commutateurs VSX sont opérationnels. Cette configuration aide les commutateurs VSX à trouver des chemins alternatifs vers la liaison ISL dans le réseau afin que les deux commutateurs VSX puissent continuer à rester synchronisés.
+Annexe 2.
+
+Virtual Routing and Forwarding VRF:
+VRF est une technologie qui permet à plusieurs instances d'une table de routage de coexister au sein d'un même routeur. Étant donné que les instances de routage sont indépendantes, des adresses IP identiques ou qui se chevauchent peuvent être utilisées sans entrer en conflit. La fonctionnalité réseau est améliorée car les chemins réseau peuvent être segmentés sans nécessiter plusieurs routeurs.
+Annexe 3.
+
+Switch d’accès CX 6200:
+Cette série de commutateurs d'accès empilables à gestion cloud est idéale pour les réseaux de campus, de succursales d'entreprises et les PME. Elle prend en charge les ACL, QoS robuste, ainsi que des protocoles courants comme le routage statique et OSPF. Avec des liaisons montantes intégrées de 1/10 GbE et une alimentation PoE de classe 4 jusqu'à 740 W, elle assure une connectivité de classe entreprise. La technologie VSF d'Aruba permet d'étendre le réseau jusqu'à 8 commutateurs sur une seule pile via des ports SFP haute performance. Entièrement programmable, la série CX 6200 offre divers modes de gestion, y compris via le cloud, CLI, GUI Web, et API RESTS
+Annexe 3.
+
+
+Switch d’accès CX 6300 JL658A:
+Cette gamme flexible dispose de liaisons montantes 1/10/25/50GbE* et 40/100GbE intégrées à vitesse filaire et prend en charge la technologie PoE haute puissance et haute densité IEEE
+802.3bt, selon le modèle. Remarque : La capacité 50G doit être utilisée avec les câbles à liaison directe 50G pour l’interconnexion et l’empilage VSF
+Annexe 3.
+Aruba VSF Virtual Switching Framework:
+La technologie HPE Virtual Switching Framework (VSF) virtualise deux périphériques physiques de la même couche en une seule structure virtuelle qui offre une haute disponibilité et une évolutivité. Une structure virtuelle est donc constituée de deux périphériques physiques de la même couche qui utilisent la technologie VSF. VSF permet aux commutateurs pris en charge connectés les uns aux autres via des connexions Ethernet normales (cuivre ou fibre) de se comporter comme un seul commutateur.
+
+Aruba UBT User Based Tunnelling:
+Le tunneling basé sur l'utilisateur utilise GRE pour canaliser le trafic entrant sur une interface de commutateur vers une passerelle de mobilité pour un traitement ultérieur. Le tunneling basé sur l'utilisateur permet à une passerelle de mobilité de fournir une politique de sécurité centralisée, en utilisant l'authentification par utilisateur et le contrôle d'accès pour garantir un accès et des autorisations cohérents.
+Les commandes suivantes sont requises pour configurer UBT :
+•	interface source IP
+•	ubt
+	client-ubt-vlan
+Il existe deux type de UBT : ubt mode vlan local et ubt mode vlan extend
+Comparaison entre les modes UBT
+Annexe 5.
+
+
+Contrôleur 7210:
+Il fait généralement référence à un dispositif ou une fonctionnalité de gestion centralisée qui orchestre et gère le mouvement des utilisateurs entre différents points d'accès Wi-Fi ou contrôleurs dans un réseau.
+Offrant des services réseau de pointe, la série 7200 optimise les performances Wi-Fi et assure une itinérance transparente. Elle est idéale pour l’évolutivité du réseau WLAN de campus ou pour le réseau SD-WAN de succursale ainsi que pour les capacités de concentrateur VPN.
+
+Dynamisant les performances du WLAN, la série HPE Aruba Networking 7200 est conçue pour prendre en charge les campus réseau les plus difficiles et offre des capacités SD-WAN en option.
+
+Parfaites pour les appareils mobiles et IoT d’aujourd’hui et répondent aux exigences en matière de performances
+Annexe 4.
+
+
+Clearpass :
+
+Clearpass résout les problèmes de sécurité actuels sur les réseaux sans fil ou filaires multifournisseurs en remplaçant les services AAA traditionnels et obsolètes par des politiques contextuelles. Il offre une visibilité, un contrôle des politiques et une automatisation des flux de travail dans une solution cohérente.
+Les rôles principaux de Clearpass :
+Contrôle d'accès basé sur les rôles (RBAC) : ClearPass permet d'attribuer des niveaux d'accès spécifiques en fonction de l'identité de l'utilisateur, du type d'appareil et d'autres critères contextuels. Cela garantit que chaque utilisateur ou appareil obtient un accès approprié aux ressources réseau.
+Authentification et autorisation : ClearPass prend en charge divers protocoles d'authentification (comme 802.1X, RADIUS) et peut authentifier les utilisateurs et appareils contre une base de données locale, un Active Directory, des annuaires LDAP, etc. Il autorise l'accès en fonction des politiques définies par l'administrateur.
+Profilage des appareils : ClearPass peut détecter et identifier automatiquement les appareils connectés au réseau (ordinateurs, smartphones, tablettes, etc.) et appliquer des politiques de sécurité adaptées à chaque type d'appareil.
+Gestion des invités : La plateforme facilite la gestion des accès invités en offrant des portails captifs personnalisables, où les invités peuvent s'enregistrer et obtenir un accès temporaire au réseau avec des droits limités.
+Surveillance et conformité : ClearPass permet de surveiller l'activité du réseau en temps réel, de générer des rapports de conformité, et de prendre des mesures correctives en cas de comportement suspect ou de non-conformité.
+Intégration avec d'autres solutions de sécurité : ClearPass s'intègre avec d'autres solutions de sécurité (firewalls, systèmes de prévention des intrusions, etc.) pour renforcer la sécurité globale du réseau en appliquant des politiques de sécurité cohérentes.
+Annexe 4.
+
+Firewall PaloAlto :
+
+Avec l’interface d’administration du firewall PaloAlto, nous définissons et gérons les politiques de sécurité qui régissent le flux de trafic réseau au sein de l'entreprise. Cela inclut la création de règles permettant ou bloquant le trafic en fonction de l'application, de l'utilisateur, ou de l'adresse IP.
+Les politiques de sécurité peuvent être personnalisées pour différentes zones du réseau (comme le réseau interne, le réseau DMZ, ou le réseau invité) afin de segmenter le réseau de manière sécurisée.
+
+Aussi, la gestion des certificats SSL/TLS utilisés pour sécuriser les connexions réseau et dans la configuration des VPN (Virtual Private Networks) pour permettre des connexions sécurisées à distance.
+Le firewall PaloAlto permet de configurer des tunnels VPN sécurisés pour les employés travaillant à distance, garantissant que les données échangées entre le client et le réseau d'entreprise sont chiffrées et protégées contre les interceptions.
+
+
+Le firewall PaloAlto fournit des outils de surveillance avancés pour suivre en temps réel le trafic réseau. On utiliser ces outils pour générer des rapports et des alertes sur les activités suspectes ou anormales
+
+
+OpenGear :
+
+OpenGear est une solution de gestion de l'infrastructure informatique spécialisée dans la résilience du réseau et la gestion hors bande (Out-of-Band Management, OOBM). Elle permet de maintenir un accès sécurisé aux équipements critiques, même en cas de défaillance du réseau principal. OpenGear offre des fonctionnalités avancées pour surveiller, configurer, et dépanner les équipements réseau à distance.
+
+Nous l’utilisons pour assurer la résilience du réseau en mettant en place des solutions de gestion hors bande. En cas de panne du réseau principal, OpenGear permet un accès continu aux équipements réseau grâce à des connexions alternatives (comme les modems cellulaires ou les connexions filaires secondaires).
+
+Cette résilience est essentielle pour minimiser les temps d'arrêt et garantir la continuité des opérations critiques, même en cas de problème majeur sur le réseau principal.
+Annexe 4.
+
+
+
+
+Technologie SDN : 
+
+La technologie SDN (Software-Defined Networking) offre des capacités avancées pour la gestion des réseaux, et lorsqu'elle est intégrée avec les équipements Aruba, elle apporte des avantages considérables en termes de performance, de sécurité et de gestion du réseau. Voici un examen approfondi des avantages et fonctionnalités que cette intégration peut offrir :
+1. Performance
+Optimisation Dynamique du Trafic : Les contrôleurs SDN d'Aruba permettent une gestion en temps réel du trafic réseau. En surveillant activement la performance du réseau, ils peuvent ajuster les chemins de trafic pour éviter la congestion et améliorer l'efficacité. Cela assure une meilleure répartition de la bande passante et une performance accrue des applications critiques.
+Gestion Avancée de la Qualité de Service (QoS) : Grâce à SDN, les équipements Aruba peuvent appliquer des politiques de QoS sophistiquées pour prioriser le trafic en fonction des besoins des applications. Cela permet de garantir que les applications sensibles au délai, telles que la VoIP et la vidéo en streaming, bénéficient de la bande passante nécessaire même en période de forte utilisation.
+Virtualisation et Agilité du Réseau : Les équipements Aruba intégrés avec SDN permettent de créer des réseaux virtuels distincts au sein de la même infrastructure physique. Cette virtualisation améliore la flexibilité et la performance en isolant les différents types de trafic et en adaptant les ressources réseau en fonction des besoins spécifiques.
+2. Sécurité
+Contrôle Granulaire des Politiques de Sécurité : SDN permet une gestion centralisée des politiques de sécurité. Les équipements Aruba peuvent appliquer des politiques cohérentes sur l'ensemble du réseau, assurant ainsi une protection uniforme contre les menaces. Les administrateurs peuvent définir des règles précises pour chaque type de trafic et chaque segment du réseau.
+Détection et Réponse Rapide aux Menaces : Avec SDN, les équipements Aruba bénéficient d'une visibilité accrue sur le trafic réseau. Cela permet une détection rapide des anomalies et des comportements suspects. Les solutions SDN peuvent déclencher des actions automatisées pour répondre aux menaces, telles que l'isolement des dispositifs compromis ou la modification des politiques de sécurité.
+Segmentations et Micro-Segmentation : La technologie SDN facilite la création de micro-segments au sein du réseau, ce qui permet de limiter les déplacements latéraux des attaquants. Les équipements Aruba utilisant SDN peuvent créer des segments sécurisés basés sur des politiques définies, améliorant ainsi la protection des données sensibles et des ressources critiques.
+3. Gestion du Réseau
+Centralisation et Simplification de la Gestion : SDN centralise la gestion du réseau à travers une interface unique. Cela simplifie la configuration, la surveillance et la gestion des équipements Aruba, permettant aux administrateurs de gérer l'ensemble du réseau depuis une plateforme centralisée. Cette approche réduit la complexité et les erreurs potentielles liées à la gestion manuelle des équipements.
+Automatisation des Tâches Réseau : La programmable offerte par SDN permet d'automatiser de nombreuses tâches réseau, telles que la configuration des équipements, la gestion des politiques, et la réponse aux incidents. Les administrateurs peuvent utiliser des scripts et des API pour automatiser les processus, améliorant ainsi l'efficacité opérationnelle et réduisant le besoin d'intervention manuelle.
+Analyse et Reporting Avancés : Les solutions SDN d'Aruba intègrent des outils d'analyse sophistiqués qui fournissent des informations approfondies sur la performance du réseau, les tendances d'utilisation, et les incidents de sécurité. Ces données permettent aux administrateurs de prendre des décisions éclairées pour optimiser le réseau et planifier les évolutions futures.
+L'intégration de la technologie SDN avec les équipements Aruba offre des améliorations significatives en termes de performance, de sécurité et de gestion du réseau. En permettant une gestion dynamique et centralisée, SDN optimise l'utilisation des ressources, renforce la sécurité et simplifie l'administration du réseau. Ces avantages font de SDN une solution puissante pour les environnements modernes, offrant une flexibilité et une efficacité accrues dans la gestion des infrastructures réseau complexes.
+
+
+
+Mes technologies utilisées :
+Microsoft teams :
+
+Microsoft Teams est une plateforme collaborative développée par Microsoft, intégrée dans la suite Office 365, qui combine des fonctionnalités de messagerie instantanée, de visioconférence, de stockage de fichiers et d'intégration d'applications.
+
+ On s’en sert pour la communication quotidienne avec les collègues et les supérieurs hiérarchiques. Les fonctionnalités de chat et de visioconférence permettent une collaboration en temps réel, essentielle pour la coordination des tâches au sein de l'équipe.
+
+Grâce aux fonctionnalités de création de canaux et de groupes de travail, Teams facilite la gestion de projets en offrant un espace centralisé pour partager des documents, assigner des tâches, et suivre l'avancement des projets.
+
+L'intégration avec d'autres outils Microsoft (comme SharePoint, OneNote, et Planner) et des applications tierces permet une gestion fluide des documents et des processus
+
+MobaXterm :
+
+C’est un logiciel multifonctions pour Windows qui propose des fonctionnalités avancées pour les utilisateurs d'ordinateurs à distance, tels que SSH, X11, RDP, VNC, FTP, MOSH, et bien d'autres.
+
+Je l’ai utilisé pour établir des connexions SSH sécurisées vers les équipements réseau distants de l'entreprise. Cela permet de gérer, configurer les équipements réseau, d'exécuter des commandes, et de surveiller les systèmes à distance.
+
+Grâce au gestionnaire de fichiers intégré, MobaXterm facilite le transfert de fichiers entre l'ordinateur local et les serveurs distants via SFTP/FTP, ce qui me permettais de télécharger mes fichiers de configuration et aussi de facilement faire un copie/coller.
+
+Permet aussi d'exécuter des scripts et des commandes Shell sur les serveurs Linux/Unix, essentiel pour l'administration et la maintenance des systèmes.
+
+PuTTY :
+Utilisé pour se connecter aux serveurs Linux/Unix de manière sécurisée. PuTTY offre une interface légère et rapide pour l'exécution de commandes à distance.
+
+Permet la configuration des équipements réseau (comme les routeurs et switchs) via des connexions Telnet ou Serial. PuTTY est souvent utilisé pour la configuration initiale et le dépannage des équipements réseau.
+
+Les fonctionnalités de sauvegarde et de gestion des sessions facilitent la connexion rapide aux serveurs fréquemment utilisés, optimisant ainsi le flux de travail.
+
+Explication de l’infrastructure réseau de l’entreprise :
+ 
+Physique :
+
+À Sept-Fons, nous avons déployé une topologie en étoile pour notre réseau, avec 7 locaux techniques et 10 baies déportées pour le Wi-Fi réparties dans toute l'usine. Deux de ces locaux techniques sont équipés de serveurs pour assurer des fonctions critiques.
+Cœur du Réseau :
+Nous disposons de deux locaux techniques principaux situés à peu près 300 mètres l'un de l'autre, chacun abritant un cœur de réseau. Ces deux cœurs sont interconnectés pour garantir une haute disponibilité, une tolérance aux pannes, et des performances optimales.
+Connectivité des Cœurs : Chaque commutateur de cœur dispose de 48 ports de 10 Gbps, équipés de modules SFP+ 10GB-LR et 6 ports de 40GBps QSFP+ permettant la liaison ISL. Les connexions entre les cœurs et les autres composants réseau sont établies via des liaisons LACP (Link Agrégation Control Protocol) pour assurer la redondance et la bande passante.
+Sécurité : Nous avons déployé deux pare-feu, interconnectés entre eux, pour protéger l'intégrité du réseau.
+Connectivité WAN : Deux routeurs WAN interconnecter entre eux sont reliés aux cœurs du réseau et connectés à la fibre optique fournie par notre FAI (Fournisseur d'Accès à Internet).
+Serveurs : Tous les serveurs sont connectés à trois commutateurs serveurs, interconnectés par des câbles DAC 40 Gbps pour une performance maximale.
+Détails des Locaux Techniques (LT) et Baies Déportés (BD)
+LT02A (Bureaux) :
+1 pile de deux commutateurs d'accès (STACK) pour les clients bureautiques, caméras, imprimantes, EMF, etc.
+2 commutateurs de secours (spare).
+3 commutateurs serveurs pour les connexions des serveurs.
+1 commutateur fibre de 24 ports pour les liaisons longue distance (utilisé en secours).
+1 serveur ClearPass
+1 serveur GTC (Gestion Technique Centralisé)
+1 serveur de mise à jour
+1 serveurs MobiCall
+1 serveur de sauvegarde
+1 pare-feu pour la protection du réseau.
+2 dispositifs OpenGear pour l'accès à distance en cas de coupure réseau.
+1 Mobility Controller pour la gestion du trafic et des politiques d'accès.
+1 contrôleur Wi-Fi principal.
+1 contrôleur 4G
+LT02D (Centre de l'usine) :
+Cœur secondaire du réseau.
+1 commutateur d'accès.
+1 commutateur fibre de 24 ports.
+Pare-feu secondaire.
+Mobility Controller secondaire.
+Contrôleur Wi-Fi secondaire.
+1 dispositif OpenGear.
+LT03A (Partie Nord de l'usine) :
+Routeur WAN primaire.
+1 commutateur d'accès.
+1 dispositif OpenGear.
+LT01B (Parking de l'ancien bâtiment) :
+1 serveur MobiCall.
+Routeur WAN secondaire.
+1 autocom.
+2 commutateurs d'accès.
+1 dispositif OpenGear.
+LT01A (Ancien bâtiment) :
+1 commutateur d'accès.
+LT02B (Zone d'usinage) :
+1 commutateur d'accès.
+1 commutateur fibre.
+LT02C (Zone de fabrication des carters moteur) :
+1 commutateur d'accès.
+BD04A (Entrée de l'usine, bureau du gardien) :
+1 commutateur d'accès.
+BD05A (Bâtiment outillage) :
+1 commutateur d'accès.
+BD06A (Zone de génération du sable, ligne 3) :
+1 commutateur d'accès.
+BD07A (Station d'épuration d'eau) :
+1 commutateur d'accès.
+BD08A (Entrée Nord de l'usine, zone alimentation électrique) :
+1 commutateur d'accès.
+BD02G (Usine, ligne 9) :
+1 commutateur d'accès.
+BD02H (Sablerie, zone Est du site) :
+1 commutateur d'accès.
+BD02F (Centre de l'usine) :
+1 commutateur d'accès.
+BD02I (Centre de l'usine) :
+1 commutateur d'accès.
+BD02E (Zone poste de parachèvement) :
+1 commutateur d'accès.
+Réseau Sans Fil (Wi-Fi)
+•	Points d'Accès (Access Points):
+Des points d'accès Wi-Fi sont répartis uniformément dans chaque bâtiment, en particulier dans les espaces communs tels que les salles de réunion, les bureaux ouverts, et les cafétérias. Ces points d'accès sont connectés aux commutateurs d'accès via des câbles Ethernet et alimentés par PoE.
+Pour une couverture optimale, une planification soignée a été faite pour minimiser les interférences et assurer une bonne couverture dans toutes les zones. Le réseau sans fil est divisé en plusieurs SSID pour différencier le trafic (corporate, invités, IoT).
+•	Contrôleur Wi-Fi:
+Un contrôleur Wi-Fi centralisé en redondance, situé dans les locaux principaux 02A et 02D, gère et configure les points d'accès. Il assure également la gestion de la mobilité, la sécurité, et la QoS pour les utilisateurs sans fil.
+Connexions Inter-locaux
+Les locaux sont interconnectés par des liaisons fibre optique dédiées, assurant une faible latence et une large bande passante. Ces connexions permettent de former un réseau intégré et performant, garantissant la fluidité des communications et la cohérence des opérations à travers l'ensemble de l'infrastructure.
+L'ajout de liaisons montantes (uplinks) de 10G/40G dans un réseau LAN (Local Area Network) peut avoir un impact significatif sur la performance, la capacité et la flexibilité du réseau. Voici une analyse détaillée de cet impact, en tenant compte des demandes croissantes en bande passante et des besoins futurs du réseau :
+1. Augmentation de la Bande Passante
+Réduction des Goulots d'Étranglement : Les liaisons montantes de 10G/40G permettent de traiter un volume de données beaucoup plus élevé par rapport aux liaisons de 1G ou 10G. Cela réduit les goulots d'étranglement qui peuvent survenir lorsque plusieurs appareils ou utilisateurs tentent d'accéder simultanément à des ressources réseau. Cette amélioration est cruciale dans les environnements à forte densité de trafic, comme les centres de données ou les environnements de virtualisation.
+Support pour les Applications Gourmandes en Bande Passante : Les applications modernes, telles que les services de cloud computing, la vidéo haute définition, et les applications de collaboration en temps réel, nécessitent une bande passante élevée. Les liaisons de 10G/40G offrent la capacité nécessaire pour supporter ces applications sans compromettre la performance, garantissant une expérience utilisateur fluide et réactive.
+2. Amélioration de la Capacité Globale du Réseau
+Augmentation de la Capacité de Commutation : Les liaisons montantes plus rapides permettent aux commutateurs de réseau de gérer plus efficacement le trafic entre les commutateurs de niveau inférieur et les équipements de niveau supérieur. Cela améliore la capacité globale du réseau et assure que les données peuvent circuler plus rapidement entre les différents segments du réseau, augmentant ainsi l'efficacité générale.
+Évolutivité Accrue : En introduisant des liaisons de 10G/40G, les réseaux peuvent évoluer pour répondre aux besoins croissants en bande passante. Ces liaisons offrent une marge de croissance importante, permettant aux organisations d’ajouter de nouveaux appareils et services sans nécessiter une refonte complète de l'infrastructure réseau. Cette évolutivité est particulièrement importante pour les organisations en croissance rapide ou celles qui prévoient d'implémenter des technologies émergentes.
+3. Réduction de la Latence
+Transmission de Données Plus Rapide : Les liaisons montantes de 10G/40G offrent une transmission de données plus rapide, ce qui peut réduire la latence dans le réseau. Moins de temps est nécessaire pour que les données parcourent le réseau, ce qui améliore la réactivité des applications et des services.
+Optimisation du Temps de Réponse : Pour les applications sensibles au temps, telles que les systèmes financiers en temps réel ou les applications de vidéoconférence, une latence réduite est cruciale. Les liaisons plus rapides contribuent à une meilleure performance de ces applications, offrant une expérience utilisateur plus fluide et efficace.
+4. Amélioration de la Résilience et de la Redondance
+Redondance Accrue : L'ajout de liaisons montantes de haute capacité peut améliorer la résilience du réseau en permettant la mise en place de chemins de redondance. Cela signifie que si une liaison rencontre des problèmes, le trafic peut être redirigé automatiquement vers une autre liaison disponible, assurant une continuité du service et réduisant les risques de panne.
+Meilleure Gestion du Trafic : Les liaisons de 10G/40G permettent une meilleure gestion du trafic en offrant plus de bande passante pour équilibrer les charges de trafic. Cela permet d’éviter la congestion sur les liaisons moins rapides et de maintenir une performance optimale même en cas de trafic élevé.
+5. Optimisation de l’Infrastructure du Réseau
+Modernisation de l'Infrastructure : L'intégration de liaisons montantes de 10G/40G est souvent accompagnée d'une mise à niveau des équipements réseau, tels que les commutateurs et les routeurs. Cette modernisation peut apporter des fonctionnalités supplémentaires, telles que des capacités de gestion avancées, une meilleure qualité de service (QoS), et des améliorations en matière de sécurité.
+Réduction des Coûts à Long Terme : Bien que l’investissement initial dans des liaisons montantes plus rapides puisse être élevé, il peut entraîner des économies à long terme. En permettant une meilleure gestion du trafic et une réduction des goulots d'étranglement, les organisations peuvent éviter les coûts liés à la mise à niveau fréquente de l'infrastructure ou à la résolution des problèmes de performance.
+L'ajout de liaisons montantes de 10G/40G dans un réseau LAN offre des avantages significatifs en matière de performance, de capacité, de résilience et de flexibilité. En répondant aux demandes croissantes en bande passante et en améliorant la capacité globale du réseau, ces liaisons permettent de soutenir les besoins futurs et de préparer le réseau à évoluer avec les exigences technologiques modernes. Cette approche contribue non seulement à optimiser la performance actuelle du réseau, mais aussi à garantir sa capacité à s'adapter aux futurs défis.
+
+Logique :
+Les VLANs (Virtual Local Area Networks) traditionnels sont une méthode courante pour segmenter les réseaux en différentes zones de sécurité ou de fonction. Bien qu'ils soient largement utilisés, ils présentent certaines limitations, notamment en termes de flexibilité et de gestion de la sécurité. Avec l'intégration de solutions comme les Mobility Conductors et ClearPass d'Aruba, il est possible de surmonter ces limitations en utilisant des Local User Rôles (rôles utilisateurs locaux).
+Limitations des VLANs traditionnels :
+Segmentation statique : Les VLANs traditionnels sont généralement configurés de manière statique. Les utilisateurs ou les appareils sont assignés à un VLAN en fonction de leur port physique ou de leur SSID, ce qui limite la flexibilité. Si un utilisateur ou un appareil change de localisation physique, il peut nécessiter une reconfiguration réseau.
+Complexité de gestion : Gérer un grand nombre de VLANs peut devenir complexe, surtout dans des environnements dynamiques où les utilisateurs se déplacent souvent ou où il y a une forte rotation d’appareils. La configuration manuelle des VLANs et l’attribution des permissions peuvent être chronophages et sujettes aux erreurs.
+Scalabilité limitée : À mesure que le réseau s’étend, la gestion des VLANs devient de plus en plus difficile. Le nombre maximal de VLANs est également limité, ce qui peut poser problème dans de très grands réseaux.
+Avantages des Local User Rôles avec conducteur de mobilité et ClearPass :
+Segmentation dynamique basée sur l'utilisateur : Avec les Local User Rôles, l'accès réseau est déterminé par le rôle de l'utilisateur plutôt que par sa localisation physique. ClearPass, une solution NAC (Network Access Control), permet de créer des politiques basées sur l'identité, le type de dispositif, et d'autres critères contextuels. Une fois l'utilisateur authentifié, Mobility Conductor peut appliquer dynamiquement les politiques réseau associées à son rôle, indépendamment du VLAN auquel il appartient.
+Gestion centralisée et simplifiée : L'intégration de ClearPass et Mobility Conductor permet une gestion centralisée des politiques de sécurité et de connectivité. Au lieu de gérer les VLANs individuellement, les administrateurs peuvent définir des rôles et des politiques d'accès qui s’appliquent automatiquement en fonction de l’identité de l'utilisateur ou du dispositif.
+Amélioration de la sécurité : Avec les Local User Rôles, chaque utilisateur ou dispositif peut être isolé dans son propre micro-segment du réseau. Cela limite les déplacements latéraux (lateral movement) en cas de compromission d’un appareil, réduisant ainsi la surface d’attaque.
+
+Évolutivité et flexibilité : En dissociant la configuration réseau de l'infrastructure physique, les Local User rôles permettent une évolutivité bien plus grande. De nouveaux utilisateurs ou dispositifs peuvent être ajoutés sans nécessiter de reconfiguration complexe du réseau.
+Configuration :
+ Le réseau est soigneusement segmenté à l’aide de VLANs (Virtual Local Area Networks) et de VRFs (Virtual Routing and Forwarding) pour optimiser la sécurité et la gestion des accès. Nous avons mis en place plusieurs VLANs pour différencier les niveaux de sécurité et les groupes d’utilisateurs, permettant ainsi un contrôle strict des flux de données et une réduction des risques de violation de sécurité en isolant les différents types de trafic réseau.
+Les VRFs sont utilisés pour la segmentation au niveau 3, créant des tables de routage virtuelles distinctes. Cela permet de gérer plusieurs instances de routage sur le même équipement physique, offrant une isolation accrue du trafic entre différents départements ou services de l'entreprise. Les VRFs facilitent la gestion des routes tout en préservant la cohérence des politiques de routage et en minimisant les interférences entre les différents segments du réseau.
+Le Link Aggregation Control Protocol (LACP) est employé pour agréger plusieurs liens physiques en une seule connexion logique. Cette technique améliore la bande passante disponible entre les équipements réseau, tout en assurant la redondance et l'équilibrage de charge. LACP contribue ainsi à la résilience du réseau en permettant la continuité du service même en cas de défaillance d'un ou plusieurs liens physiques.
+ Nous avons également implémenté des politiques d'accès basées sur des rôles (Role-Based Access Control, RBAC) pour affiner la gestion des autorisations réseau. Les rôles d’accès définissent les niveaux de privilèges pour différents utilisateurs et groupes, assurant ainsi que chaque utilisateur accède uniquement aux ressources nécessaires à son rôle spécifique.
+ Le réseau utilise des fonctionnalités avancées telles que le "User-Based Tunneling" pour sécuriser les sessions des utilisateurs, en créant des tunnels individuels basés sur les identités des utilisateurs. Cette approche renforce la confidentialité et l'intégrité des communications réseau en isolant les sessions utilisateur.
+ Le filtrage au niveau du contrôleur de mobilité est mis en œuvre pour superviser et réguler les connexions sans fil. Ce filtrage assure que seules les connexions autorisées sont établies, améliorant ainsi la sécurité et la performance du réseau sans fil.
+ ClearPass est utilisé pour l'authentification et la supervision du réseau. ClearPass fournit des capacités avancées de gestion des accès et de contrôle, en intégrant des politiques d'accès dynamiques basées sur l'identité et le rôle des utilisateurs. Il offre également des fonctionnalités de supervision en temps réel pour suivre les activités des utilisateurs et détecter les anomalies potentielles.
+
+Mission et activité :
+Description des missions :
+Ma mission consiste à remplacer l'infrastructure réseau existante (Cisco) par de nouveaux équipements HPE Aruba, permettant ainsi l'intégration de la technologie SDN (Software-Defined Network) tout en optimisant les coûts. Cette transformation vise à moderniser l'infrastructure réseau, à améliorer la flexibilité et à préparer l'entreprise aux futures exigences technologiques. Dès mon arrivée, les étapes suivantes ont été entreprises:
+Repérage des rocades et étiquetage des liens :
+En collaboration avec mon tuteur, Éric DELECROIX, nous avons procédé à un audit physique des locaux techniques. Nous avons parcouru chaque salle technique pour identifier les points d'arrivée et de départ des fibres optiques interconnectant les différents espaces. Cette étape était cruciale pour assurer une migration fluide vers le nouvel équipement sans interruption de service.
+Pour chaque liaison vers un équipement informatique, j'ai utilisé une étiqueteuse professionnelle pour apposer des étiquettes détaillant l'origine et la destination des connexions. Cela permet non seulement d'assurer la traçabilité des connexions, mais aussi de faciliter la maintenance future. J'ai centralisé ces informations dans un dossier partagé sur Microsoft Teams, intitulé "CAMPUSNEXT". Ce dossier comprend un fichier spécifique nommé "Réseau Fibre", où j'ai documenté l'intégralité des interconnexions entre les locaux, ainsi que les liaisons directes vers chaque équipement, créant ainsi une cartographie précise du réseau.
+Installation physique des équipements :
+La mise en place physique des nouveaux équipements a commencé par l'installation du Nexus, un équipement Cisco stratégique permettant d'assurer la transition entre le cœur de réseau Cisco existant et le nouveau cœur Aruba. Cette phase a été réalisée dans les deux principaux locaux techniques du site, afin de garantir une redondance et une résilience du réseau.
+Ensuite, Les cœurs Aruba ont été installés dans ces mêmes locaux ainsi que les contrôleurs de mobilité, éléments essentiels pour la gestion centralisée du réseau. Après l'installation, j'ai procédé à la configuration initiale et à la connexion des équipements sur le réseau existant, en utilisant les cœurs Cisco en place. Pour valider la connectivité, j'ai effectué des tests SSH via MobaXterm, confirmant ainsi l'accessibilité des équipements à distance et la bonne intégration dans l'infrastructure existante.
+Par la suite, j'ai intégré des modules SFP+ 10GB-LR sur chacun des cœurs Aruba pour assurer des connexions à haute vitesse entre les équipements. Un test de validation a été réalisé en utilisant la commande : 
+show interface brief, qui a confirmé le bon fonctionnement et l'intégrité des modules installés.
+Gestion des équipements sur Reflex :
+Reflex est une application de gestion des actifs réseau, indispensable pour le suivi de l'inventaire et la gestion des configurations. Chaque nouvel équipement réseau introduis dans l'infrastructure est systématiquement ajouté à Reflex. Cette mise à jour inclut la création d'un hostname, l'enregistrement du numéro de série, l'affectation du site et du bâtiment, ainsi que le statut de l'équipement (en commande, reçu, ou installé). Pour les équipements montés en stack ou les points d'accès Wi-Fi, des détails supplémentaires tels que le rack, l'étage, ou le pilier sont également précisés.
+Grâce à cette rigueur, l'inventaire réseau reste à jour, et la gestion des actifs devient plus efficace, ce qui simplifie les audits et la maintenance.
+ 
+Entité Réseau :
+Dans ce champ, je remplis les informations suivantes :
+•	Type d’intervention : Je sélectionne le niveau approprié (1, 2 ou 3).
+•	Fonction de l’équipement : J'indique la fonction précise de l'équipement.
+•	Surveillance réseau : J'active la surveillance réseau et spécifie les paramètres nécessaires.
+•	Analyse CCCR : Je coche également "oui" pour activer l'analyse CCCR (Centre de Contrôle et de Commande Réseau).
+ 
+Entité Application :
+Dans ce champ, on remplit les informations suivantes
+•	Reso/SF
+ 
+Création d’Equipment sur IMC :
+IMC est une plateforme de gestion centralisée développée par Hewlett Packard Enterprise (HPE). Chaque nouvel équipement doit être ajouté dans l’IMC pour garantir une surveillance continue. L'IMC permet également d'interagir directement avec l’équipement, notamment pour effectuer des mises à jour et d'autres opérations de gestion à distance.
+ 
+ 
+
+Déclaration des équipements réseau sur ISE :
+ISE est une solution de gestion des identités et des accès développés par Cisco. Elle est conçue pour offrir une gestion complète des politiques de sécurité sur un réseau, en fournissant des contrôles d'accès basés sur les rôles, l'authentification des utilisateurs, et la conformité des dispositifs.
+ISE est une plateforme où tous les équipements réseau doivent être déclarés avec une configuration correcte de RADIUS. Cela inclut la saisie du mot de passe RADIUS, l’adresse IP de l’équipement, et la spécification de la marque de l’équipement (Aruba ou Cisco). Cette configuration est essentielle pour permettre l'accès aux équipements via l'authentification RADIUS.
+ 
+
+Configuration des Point d’accès (AP) :
+Dans le cadre du projet "Refresh Wi-Fi", j'ai configuré 24 bornes Wi-Fi pour remplacer celles qui ne supportent pas la technologie SDN.
+Pour chaque borne, j'ai accédé à sa console afin de renommer l'appareil, de modifier le nom d'utilisateur et de mettre à jour le mot de passe. Ensuite, j'ai utilisé le contrôleur pour forcer la borne à récupérer sa configuration via CAPWAP, en spécifiant l'adresse IP du contrôleur Wi-Fi.
+Capwap ap primary-base SXGW191 10.90.218.181
+Configuration des contrôleurs wifi :
+Jusqu'à présent, nos points d'accès étaient gérés par des contrôleurs situés sur un autre site. Avec mon collègue Oscar BRUNGARD, nous avons configuré les contrôleurs de sept sites en mode Haute Disponibilité (HA). Cette configuration nous permet désormais de gérer de manière indépendante les points d'accès sans dépendre des contrôleurs externes, assurant ainsi une plus grande autonomie et résilience dans la gestion de notre réseau.
+hostname XXXXXXXX
+vlan XXX
+name admin
+vlan XXX
+name WLAN nowhere
+for RPI : 
+vlan XX
+name user-RPI-vlxxx
+for industriel : 
+vlan XX
+name user-INDUS-vlxxx
+interface vlan XXX
+description vlan administration
+ip addres XX.XX.XX.XX 255.255.XXX.XXX
+no shut
+
+ip default-gateway XXX.XXX.XXX.XXX
+ip route XXX.XXX.XXX.XXX XXX.XXX.XXX.XXX XXX.XXX.XXX.XXX
+wireless management interface VlanXXX  same vlan xxx
+username admin privilege 15 password 0 XXXXXXXX 
+interface Port-channel1
+description XXXX  interface and name of opposite switch
+switchport
+ switchport trunk allowed vlan XXX,XXX,XXX
+ switchport mode trunk
+no snmp trap link-status
+
+interface TenGigabitEthernet0/1/0 (for wlc 9800-L) or TenGigabitEthernet0/0/0 (for wlc 9800-40)
+ description XXXXXXX
+ switchport
+ switchport mode trunk
+ switchport trunk allowed vlan XXX,XXX,XXX
+ negotiation auto
+ no snmp trap link-status
+ channel-group 1 mode on
+ no shut
+
+interface TenGigabitEthernet0/2/0 (for wlc 9800-L) or TenGigabitEthernet0/0/1 (for wlc 9800-40)
+ description XXXXXX
+ switchport
+ switchport mode trunk
+ switchport trunk allowed vlan XXX,XXX,XXX
+ negotiation auto
+ no snmp trap link-status
+ channel-group 1 mode on
+ no shut
+
+key config-key password-encrypt XXXXXXXXX 
+password encryption aes
+exit
+wr
+
+ap dot11 5ghz shutdown
+Disabling the 802.11a network may strand mesh APs.
+Are you sure you want to continue? (y/n)[y]: y
+
+ap dot11 24ghz shutdown
+Disabling the 802.11b network may strand mesh Aps
+
+Are you sure you want to continue? (y/n)[y]: y
+
+ap country FR  in function of your country
+Changing country code could reset channel and RRM grouping configuration. If running in RRM One-Time mode, reassign channels after this command. Check customized APs for valid channel values after this command.
+Are you sure you want to continue? (y/n)[y]: y
+
+no ap dot11 5ghz shutdown
+no ap dot11 24ghz shutdown
+wr
+
+Mode HA:
+En interface graphique GUI sur les deux contrôleurs, nous faisons la manipulation suivante :
+ 
+ 
+ 
+En commande line, nous pouvons voir le résultat
+ 
+
+ 
+
+
+Configuration des switches :
+Tous les commutateurs 6200 de sept fons ont été configurer de manière basique comme suit : 
+!Version ArubaOS-CX ML.10.12.1010
+!export-password: default
+hostname SFWPV02
+domain-name inetpsa.com
+banner motd !
+#####################################################
+    ~           ISE Authentification            ~
+    ~        Enter your LOGIN & MDP RPI         ~
+#####################################################
+-----------------------------------------------------
+#####################################################
+    ~       ARUBA 6200F-48-POE-740W - xxxxxxx   ~
+    ~             SITE DE SF - xxxxxxx         ~
+#####################################################
+!
+user admin group administrators password plaintext xxxxxxx
+clock timezone europe/paris
+loop-protect re-enable-timer 300
+loop-protect trap loop-detected
+no event-trap-enable
+no snmp-server trap rmon-events
+no cdp enable
+ntp server xx.xx.xx.xx version 3
+ntp server xx.xx.xx.xx version 3
+ntp server xx.xx.xx.xx version 3 prefer
+ntp enable
+cli-session
+    timeout 10
+radius-server host 10.80.16.19 key plaintext stla2022RAD
+radius-server host 10.68.161.1 key plaintext stla2022RAD
+radius-server host bedic01.inetpsa.com key plaintext admin clearpass-username cppmdur clearpass-password plaintext admin
+radius-server host sfdic21.inetpsa.com key plaintext admin clearpass-username cppmdur clearpass-password plaintext admin
+aaa group server radius ADMIN
+    server xx.xx.xx.xx
+    server xx.xx.xx.xx 
+aaa group server radius SFCP
+    server xx.xx.xx.xx
+    server xx.xx.xx.xx
+aaa authentication login console group local
+aaa authentication login default group ADMIN local
+aaa accounting all-mgmt default start-stop group ADMIN
+aaa accounting port-access start-stop interim 5 group SFCP
+!
+radius dyn-authorization enable
+!
+radius dyn-authorization client 10.68.33.44 secret-key plaintext xxxxxxxx
+radius dyn-authorization client 10.90.210.10 secret-key plaintext xxxxxxx
+aruba-central
+    disable
+logging xx.xx.xx.xx include-auditable-events
+ssh server vrf default
+ssh server vrf mgmt
+ssh key-exchange-algorithms curve25519-sha256 curve25519-sha256@libssh.org ecdh-sha2-nistp256 ecdh-sha2-nistp384 ecdh-sha2-nistp521 diffie-hellman-group-exchange-sha256 diffie-hellman-group16-sha512 diffie-hellman-group18-sha512 diffie-hellman-group14-sha256 diffie-hellman-group14-sha1
+vsf member 1 
+    type jl728a
+client track ip 
+vlan xxx
+vlan xxx
+    name VLAN10-IP12_USERS_LEGACY  
+    client track ip
+vlan xxx
+    name Vlan210_IP123_SERV
+    client track ip
+vlan xxx
+    name Vlan648_IP3_USER_LEGACY
+    client track ip
+vlan xxx
+    name Vlan-AP-WIFI
+    client track ip
+vlan xxx
+    name TUNNELED_NODE_SERVER_RESERVED
+vlan xxx
+    name VLAN-INFRA
+vlan xxx
+    name UNAUTH
+spanning-tree
+interface mgmt
+    no shutdown
+    ip dhcp
+ubt-client-vlan 666
+ubt zone STLA_UBT vrf default
+    primary-controller ip xx.xx.xx.xx
+    backup-controller ip xx.xx.xx.xx
+    enable
+qos trust dscp
+qos dscp-map 0 local-priority 0 color green 
+qos dscp-map 1 local-priority 0 color green 
+qos dscp-map 2 local-priority 0 color green 
+qos dscp-map 3 local-priority 0 color green 
+qos dscp-map 4 local-priority 0 color green 
+qos dscp-map 5 local-priority 0 color green 
+qos dscp-map 6 local-priority 0 color green 
+qos dscp-map 7 local-priority 0 color green 
+qos dscp-map 8 local-priority 1 color green 
+qos dscp-map 9 local-priority 1 color green 
+qos dscp-map 10 local-priority 1 color green 
+qos dscp-map 11 local-priority 1 color green 
+qos dscp-map 12 local-priority 1 color green 
+qos dscp-map 13 local-priority 1 color green 
+qos dscp-map 14 local-priority 1 color green 
+qos dscp-map 15 local-priority 1 color green 
+aaa authentication port-access cached-critical-role
+    enable 
+port-access role SW-LUR-VL9
+    client-inactivity timeout none 
+    trust-mode dscp
+    stp-admin-edge-port 
+    gateway-zone zone STLA_UBT gateway-role MC-LUR-VL9
+port-access role SW-LUR-VL11
+    client-inactivity timeout none 
+    trust-mode dscp
+    stp-admin-edge-port 
+    gateway-zone zone STLA_UBT gateway-role MC-LUR-VL11
+port-access role xxxxxxxxx
+    client-inactivity timeout none 
+    trust-mode dscp
+    stp-admin-edge-port 
+    gateway-zone zone STLA_UBT gateway-role MC-LUR-VL2009
+	vlan trunk allowed xxxx
+port-access role SW-LUR-VL2010
+    client-inactivity timeout none 
+    trust-mode dscp
+    stp-admin-edge-port 
+    gateway-zone zone STLA_UBT gateway-role MC-LUR-VL2010
+	vlan trunk allowed xxx
+port-access role SW-LUR-VL2011
+    client-inactivity timeout none 
+    trust-mode dscp
+    stp-admin-edge-port 
+    gateway-zone zone STLA_UBT gateway-role MC-LUR-VL2011
+	vlan trunk allowed xxxx
+port-access role SW-LUR-VL2308
+    client-inactivity timeout none 
+    trust-mode dscp
+    stp-admin-edge-port 
+    gateway-zone zone STLA_UBT gateway-role MC-LUR-VL2308
+	vlan trunk allowed xxx
+port-access role SW-LUR-VL650
+    client-inactivity timeout none 
+    trust-mode dscp
+    stp-admin-edge-port
+	gateway-zone zone STLA_UBT gateway-role MC-LUR-VL650
+aaa authentication port-access dot1x authenticator
+    radius server-group SFCP
+    enable
+aaa authentication port-access mac-auth
+    radius server-group SFCP
+    enable
+interface lag 1
+    description xxx-xxx
+    no shutdown
+    no routing
+    vlan trunk native 949
+    vlan trunk allowed 948-949
+    lacp mode active
+    spanning-tree loop-guard
+interface 1/1/1
+    no shutdown
+    speed auto 10m 100m
+    no trap link-status
+    no trap ifmib-link-status
+    no routing
+    vlan access xxx
+    qos trust dscp
+    spanning-tree bpdu-guard
+    spanning-tree port-type admin-edge
+    spanning-tree tcn-guard
+    loop-protect
+    loop-protect action tx-rx-disable
+    aaa authentication port-access auth-priority mac-auth dot1x
+    aaa authentication port-access client-limit 3
+    port-access allow-flood-traffic enable
+    aaa authentication port-access dot1x authenticator
+        cached-reauth
+        eapol-timeout 30
+        max-eapol-requests 1
+        max-retries 1
+        enable
+    aaa authentication port-access mac-auth
+        cached-reauth
+        enable
+    no power-over-ethernet
+    power-over-ethernet pre-std-detect
+interface vlan xxx
+    description VRF-INFRA
+    ip address xx.xx.xx.xx/xx
+snmp-server vrf default
+snmp-server trap snmp coldstart warmstart vrf default
+snmp-server community xxxxxxxxx
+snmp-server community xxxxxxxxxx
+    access-level rw
+snmpv3 user airwave-snmp auth sha auth-pass ciphertext AQBapeSG9CoTIVeopV/O5pZOiX8FPuD93b0MjILYf7sO9qNPCAAAADGS/y5DobTe priv des priv-pass ciphertext AQBapeSG9CoTIVeopV/O5pZOiX8FPuD93b0MjILYf7sO9qNPCAAAADGS/y5DobTe 
+snmp-server host xx.xx.xx.xx trap version v2c community stla2022RO 
+snmp-server host xx.xx.xx.xx trap version v2c community stla2022RO 
+snmp-server host xx.xx.xx.xx trap version v2c community stla2022RO 
+snmpv3 context airwave-snmp vrf default community stla2022RO
+ip route xx.xx.xx.xx / xx.xx.xx.xx
+ip dns domain-name inetpsa.com
+ip dns server-address xx.xx.xx.xx
+
+ip source-interface ubt xx.xx.xx.xx
+https-server rest access-mode read-only
+https-server vrf default
+https-server vrf mgmt
+no power-over-ethernet trap
+
+
+Mise des switches dans clearpass :
+Chaque commutateur d'accès au réseau doit être configuré dans ClearPass. Pour ce faire :
+Accéder à l'interface d'administration : Connectez-vous à l'interface d'administration de ClearPass Policy Manager, puis naviguez vers Configuration > Devices.
+Ajouter un nouveau commutateur : Cliquez sur l'option pour ajouter un nouvel appareil. Renseignez le champ Name avec le nom du commutateur et le champ IP Address avec son adresse IP. Une fois ces informations saisies, cliquez sur Add pour enregistrer le commutateur.
+Configurer les attributs : Après l'ajout, vous pouvez configurer les ports du commutateur dans le champ Attributes. Cette configuration permet d'adapter les ports en fonction des terminaux ou des utilisateurs connectés, garantissant ainsi une gestion précise et sécurisée de l'accès réseau.
+ 
+Migration :
+Pour les VLAN en mode traditionnel, l'intervention se fait manuellement. En ce qui concerne les VLAN en mode LUR, la configuration des ports est effectuée dans ClearPass.
+Rapport hebdomadaire :
+Un rapport hebdomadaire est généré à la fin de chaque semaine pour assurer le suivi du projet.
+Enjeux et Défis de la Mission :
+Importance de la mission pour l'entreprise :
+Ce projet revêt une importance stratégique pour l'entreprise, car il répond à plusieurs enjeux critiques :
+Renforcement de la sécurité réseau : L'intégration de la technologie SDN (Software-Defined Networking) et de la solution ClearPass d'Aruba permet de renforcer considérablement la sécurité du réseau. Grâce à la gestion centralisée et automatisée des politiques de sécurité, l'entreprise est mieux équipée pour faire face à d'éventuels problèmes de sécurité, tels que les cyberattaques ou les accès non autorisés.
+Indépendance opérationnelle du site de Sept Fons : Auparavant, le contrôleur des bornes Wi-Fi était géré par un autre site, ce qui créait une dépendance. Avec ce projet, le site de Sept Fons devient autonome en matière de gestion du réseau Wi-Fi, améliorant ainsi sa résilience et sa capacité à répondre rapidement aux besoins locaux.
+Amélioration des performances réseau : L'intégration de liaisons à haute performance de 10 et 40 Gbps assure une bande passante accrue pour le site de Sept Fons. Cela non seulement améliore la vitesse et la fiabilité des communications, mais permet également au site de prendre en charge un plus grand nombre de services et d'applications, favorisant ainsi une augmentation de ses ressources et de ses capacités opérationnelles.
+Optimisation et agilité du réseau : Grâce à la technologie SDN, le réseau du site devient plus flexible et adaptable aux besoins changeants de l'entreprise. Il est possible de déployer rapidement de nouvelles applications, de reconfigurer les services réseau et d'assurer une meilleure gestion du trafic, ce qui optimise l'efficacité globale du site.
+En somme, ce projet renforce non seulement la sécurité et l'indépendance du site de Sept Fons, mais aussi sa capacité à évoluer et à répondre aux futurs défis technologiques de l'entreprise.
+
+Défis rencontrés et solutions apportées :
+Lors de la mise en œuvre de ce projet, plusieurs défis ont été identifiés et surmontés :
+Configuration du mode USER BASED TUNNELING (UBT) :
+Aucun site n'avait auparavant configuré le mode UBT avec un VLAN local, qui nécessite la création d'un VLAN spécifique pour le tunneling. Lors des tests d'un VLAN LUR, nous avons constaté que le tunnel ne s'établissait pas jusqu'au contrôleur, LUR correspondant dans l'interface graphique du contrôleur et, après plusieurs ajustements sur la configuration du commutateur, le tunnel s'est correctement établi. Malgré la création du rôle nécessaire. Pour résoudre ce problème, nous avons créé le VLAN
+Migration du VLAN administrateur pour les équipements Cisco :
+Nous avions initialement un VLAN administrateur dédié aux équipements Cisco et souhaitions le remplacer par un autre VLAN. Au cours de la migration, il est apparu que cela nécessitait la création de nouvelles adresses IP et d'autres alias DNS. Pour éviter de gaspiller des adresses IP supplémentaires, il a été décidé de conserver le même VLAN administrateur.
+Absence de VLAN pour les points d'accès :
+Après avoir terminé la configuration des contrôleurs pour les points d'accès, nous avons remarqué qu'aucun VLAN dédié n'avait été configuré pour ces derniers. En réponse, nous avons créé un nouveau VLAN spécifiquement pour les points d'accès, assurant ainsi une gestion optimale de ces dispositifs.
+Conclusion :
+Ce mémoire a permis de mettre en œuvre et d’évaluer des solutions technologiques avancées pour optimiser la gestion et la sécurité des réseaux au sein de l'entreprise d'accueil. L'intégration de diverses technologies, telles que les solutions de Software-Defined Networking (SDN) intégrées à Aruba, PaloAlto Networks, OpenGear, ainsi que les liaisons de 1/10GBps et 40Gps, a joué un rôle clé dans l'amélioration de l'infrastructure réseau de l'entreprise.
+L'intégration des solutions SDN d'Aruba a permis d'optimiser la gestion et la flexibilité du réseau. En remplaçant les anciens équipements LAN par la technologie Aruba, nous avons pu activer des fonctionnalités avancées de gestion centralisée et de contrôle dynamique du trafic réseau. Cette approche a facilité l’adaptation rapide aux besoins futurs en matière de bande passante et de gestion des flux, tout en offrant une meilleure visibilité et un contrôle amélioré des applications réseau.
+L'utilisation des firewalls PaloAlto a considérablement renforcé la sécurité de l'infrastructure. Les capacités avancées d'inspection approfondie des paquets (DPI) et de prévention des intrusions (IPS) ont permis de détecter et de neutraliser les menaces potentielles en temps réel. Cette configuration a contribué à une gestion granulaire et sécurisée du trafic réseau, protégeant ainsi les actifs critiques de l'entreprise contre les cyberattaques et garantissant une intégrité accrue des données.
+La mise en œuvre d'OpenGear pour la gestion hors bande a assuré une résilience réseau élevée en permettant un accès sécurisé aux équipements critiques, même en cas de défaillance du réseau principal. La gestion efficace des équipements à distance et la surveillance continue ont permis de réduire les temps d'indisponibilité et de maintenir la continuité des opérations.
+L'introduction des liaisons montantes de 1/10Gps et 40Gps a été cruciale pour répondre aux besoins croissants en bande passante et améliorer les performances globales du réseau. Ces améliorations ont permis une gestion plus efficace du trafic et une réduction des goulets d'étranglement, facilitant ainsi un environnement de travail plus fluide et réactif.
+Ce projet a significativement enrichi mes compétences en sécurité des réseaux informatiques. L'expérience pratique avec des technologies de pointe telles que PaloAlto, Aruba SDN, et OpenGear a renforcé ma compréhension des défis contemporains en matière de sécurité et m'a permis d'acquérir des compétences avancées dans la configuration, la gestion, et la sécurisation des infrastructures réseau. La résolution des problèmes de sécurité et la gestion des incidents ont été des aspects clés de mon apprentissage, contribuant à une meilleure préparation pour les défis futurs dans le domaine de la cyber sécurité.
+
+Bibliographie :
+Liste des références bibliographiques utilisées dans le mémoire : 
+•	Documentation Aruba 8320
+•	Documentation Aruba 6200F
+•	Documentation Aruba Mobility Conductor
+•	Documentation Clearpass
+•	Documentation OpenGear
+•	Chatgpt
+•	Wikipédia
+•	Documentation de l’entreprise
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+Annexes :
+Annexe1 : commutateur CX3820 :
+ 
+Commutateur haute densité 1/10GbE et 40GbE offrant des performances de vitesse filaire pour alimenter les applications gourmandes en bande passante d'aujourd'hui.
+Conçu pour une efficacité opérationnelle révolutionnaire avec une sécurité et une résilience intégrées, le CX 8320 constitue la base des réseaux hautes performances prenant en charge les applications IoT, mobiles et cloud.
+Fournit 2,5 Tbit/s pour la commutation bidirectionnelle et 1 905 Mbit/s pour le transfert.
+Couvre les réseaux de campus et de centres de données avec une flexibilité traditionnelle et gérée dans le cloud.
+Assure l'ensemble de fonctionnalités avancées de couche 2/3 comprend BGP, OSPF, VRF et IPv6. La commutation et le routage sont effectués dans les modules d'E/S, répondant aux exigences des applications gourmandes en bande passante d'aujourd'hui et de demain.
+Couvre les réseaux de campus et de centres de données avec une flexibilité traditionnelle et gérée dans le cloud.
+Commutateurs 1U compacts avec connectivité 1/10GbE (SFP/SFP+ et 10GBASE-T) et 40GbE
+Couvrant les réseaux de campus et de centres de données avec une flexibilité traditionnelle et gérée dans le cloud.
+Prend en charge la technologie Virtual Switching Extension VSX 
+Annexe 2 : VSX, ISL et KEEPALIVE:
+VSX :
+
+ 
+ 
+
+ISL :
+ 
+
+
+Dans le chemin de données, le trafic est transféré de manière native sans encapsulation supplémentaire, contrairement à VSF. ISL est capable d'envoyer des données de chemin de contrôle, ce qui nécessite des paquets surdimensionnés. Le MTU ISL est automatiquement défini sur la taille requise pour prendre en charge les paquets surdimensionnés et ne peut pas être écrasé manuellement pour éviter de générer une panne involontaire. Les compteurs de jetons de l'interface ISL affichent ces données de chemin de contrôle surdimensionnées dans le cadre de l'opération ISL. La liaison ISL est le pipeline principal pour la synchronisation des données, telles que celles des composants suivants, lors de la jonction de la pile VSX et également de manière permanente entre les homologues VSX :
+Tableau ARP
+États LACP pour les LAG VSX
+Tableau MAC
+États MSTP
+L'ISL utilise le contrôle de version et offre une compatibilité descendante concernant les capacités de synchronisation VSX.
+L'ISL peut couvrir de longues distances (en fonction de l'émetteur-récepteur). Le trafic qui transite par les liaisons VSX ne bénéficie d'aucune encapsulation supplémentaire.
+Tous les ports ISL doivent avoir la même vitesse. La vitesse peut être de 10 G, 25 G, 40 G ou 100 G, 40 G et 100 G étant les vitesses préférées. Par exemple : 2 x 40 G.
+
+Keepalive :
+ 
+Keepalive est une interface de couche 3 utilisée pour échanger des pulsations entre les commutateurs homologues VSX. Les pulsations sont échangées à l'aide du protocole UDP (User Datagram Protocol) et du port 7678 (par défaut).
+Configurez chaque commutateur homologue VSX avec une connexion Keepalive vers l'autre commutateur homologue VSX. Cette connexion est établie via un réseau routé (IPv4 actuellement) et ne nécessite pas nécessairement une liaison peer-to-peer dédiée contrairement à ISL. Les paquets Keepalive sont basés sur UDP.
+Assurez-vous que les commutateurs homologues VSX disposent d'une accessibilité de couche 3 pour les interfaces de maintien de connexion via des interfaces directement connectées ou acheminées via le réseau de couche 3 en amont. La source des interfaces de maintien de connexion peut être une interface de couche 3 (port de routeur), une interface de bouclage ou une interface virtuelle de commutateur (SVI). Une SVI est une interface logique de couche 3 configurée par VLAN (mappage un à un) qui effectue tout le traitement de couche 3 pour les paquets vers ou depuis tous les ports de commutateur associés à ce VLAN.
+
+
+Annexe 3 : commutateur CX6200, CX6300 et VSF
+Commutateur 6200 :
+ 
+Cette série de commutateurs d'accès empilables et gérables dans le cloud est idéale pour les succursales d'entreprise et les réseaux de campus, ainsi que pour les PME.
+Connectivité de classe entreprise
+Prend en charge les ACL, la QoS robuste et les protocoles courants tels que le routage OSPF statique et d'accès.
+Puissance et vitesse pour les utilisateurs et l'IoT
+Les liaisons montantes 1 GbE intégrées, les liaisons montantes 1/10 GbE et 30 W à 60 W de PoE de classe 4 à classe 6 offrent une connectivité de classe entreprise pour tous les environnements.
+Une croissance évolutive simplifiée
+Aruba Virtual Switching Framework (VSF) vous permet de développer rapidement votre réseau jusqu'à huit membres dans une seule pile à l'aide de ports SFP 10G intégrés hautes performances.
+Flexibilité de gestion
+La série CX 6200 entièrement programmable prend en charge un choix de gestion, notamment la gestion centralisée basée sur le cloud et sur site, la CLI, l'interface graphique Web du commutateur et la programmabilité avec le système d'exploitation AOS-CX et les API REST
+
+Commutateur 6300 :
+ 
+D’une efficacité opérationnelle remarquable avec sécurité et résilience intégrées, les commutateurs CX 6300 garantissent une mise en réseau haute performance.
+Commutation de niveau 3
+Commutateurs empilables avec BGP, EVPN, VXLAN, VRF et OSPF ainsi que sécurité robuste et QoS.
+Performances permanentes et évolutives
+Capacité de commutation du système de 880 Gbit/s, capacité de débit du système de 660 Mpps et blocs d’alimentation et ventilateurs redondants et remplaçables à chaud.
+Rapidité et puissance pour les utilisateurs et l’IoT
+Liaisons montantes à vitesses filaires 10/25/50 GbE intégrées, SFP+ haute densité et choix de plusieurs gigabits de type HPE Smart Rate avec PoE de 90 W sur chaque port.
+Croissance évolutive simplifiée
+La technologie VSF (Virtual Switching Framework) d’Aruba vous permet d’empiler jusqu’à 10 commutateurs, garantissant évolutivité et gestion simplifiée.
+Solution Top-of-Rack
+Offre groupée de commutateurs alimentation vers port avec débit d’air avant-arrière, idéale pour les déploiements ToR et OOBM 1 GbE de datacenter.
+Gestion flexible
+Entièrement programmable, la série CX 6300 supporte un choix de modes de gestion, notamment Central basé dans le cloud ou sur site, CLI, GUI Web de commutateur et programmabilité avec système d’exploitation AOS-CX et API REST.
+
+VSF :
+La technologie Aruba Virtual Switching Framework (VSF) virtualise jusqu'à huit périphériques physiques de la même couche dans une seule structure virtuelle qui offre une disponibilité et une évolutivité élevées. Une structure virtuelle est donc constituée de plusieurs périphériques physiques de la même couche qui utilisent la technologie VSF.
+VSF permet aux commutateurs pris en charge connectés les uns aux autres via des connexions Ethernet normales (cuivre ou fibre) de se comporter comme un seul commutateur.
+Deux dispositifs utilisant la technologie VSF apparaissant comme un seul nœud pour les dispositifs de couche supérieure et de couche inférieure
+ 
+Pour la version 16.01, VSF prenait en charge une pile à 2 membres pour une paire de commutateurs 5400R avec des lames V3, interconnectés via des connexions Ethernet standard avec une capacité d'empilage de front-plane. La connectivité entre commutateurs était limitée aux liaisons 10G et 40G. À partir de la version 16.03, VSF prenait en charge une pile à 4 membres pour les liaisons 1G et 10G. Dans la pile VSF à 8 membres, la même capacité d'empilage de front-plane a été étendue aux commutateurs 2930F. Les variantes ont :
+Ports 1G (cuivre et SFP) et ports 10G (SFP+).
+Ports PoE+ et non PoE+.
+Aucune des variantes ne possède de port OOBM.
+La fonction VSF permet à l'utilisateur de former une pile de huit appareils maximum de n'importe quelle référence, y compris de mélanger les références dans une seule pile. Les commutateurs de ces piles sont interconnectés à l'aide de connexions Ethernet standard. Ces interconnexions entre les commutateurs membres sont appelées liaisons VSF. Chaque liaison VSF peut comprendre jusqu'à huit ports VSF individuels, et le trafic entre deux membres sera automatiquement équilibré sur tous les ports connectés. Chaque commutateur peut avoir deux liaisons VSF. Les commutateurs se comportent comme un seul commutateur virtuel. Le 2930F prend en charge un maximum de quatre ports 10G.
+ 
+
+
+
+
+
+Annexe 4 : Clearpass, Conducteur de mobilité, OpenGear
+Clearpass : VISIBILITÉ ET ADMINISTRATION CENTRALISÉES 
+Les politiques ClearPass et le protocole AAA (Authentication, Authorization, Accounting) assurent le profilage des terminaux, avec interface d’administration Web, reporting complet et alertes en temps réel. Les données contextuelles collectées dans ce contexte sont exploitées pour garantir que les utilisateurs et les terminaux bénéficient des privilèges d’accès appropriés – quelles que soient la méthode d'accès utilisée et la propriété du terminal. Un moteur de profilage intégré collecte des données en temps réel (catégories de terminal, fournisseurs, versions d’OS, etc.). Il n’est plus nécessaire de « deviner » le nombre de terminaux connectés aux réseaux câblés et sans fil. La visibilité granulaire permet de disposer des données nécessaires pour les audits et pour déterminer les zones présentant des risques en matière de performances ou de sécurité.
+LA MOBILITÉ ET L'IT SONT EN TRAIN DE CHANGER NOTRE PERCEPTION DES SOLUTIONS NAC
+Le domaine de supervision du département IT dépasse désormais les quatre murs de l'entreprise, et l'objectif des entreprises consiste à proposer une connectivité en tous lieux et 24x7 sans jamais compromettre la sécurité. Comment le département IT peut-il maintenir une visibilité suffisante et un contrôle efficace sans impacter les activités de l’entreprise et l’expérience des utilisateurs ? Il suffit d'appliquer un plan en trois étapes. 
+1. Identifier les terminaux utilisés, leur nombre, leurs points de connexion et leurs systèmes d’exploitation – c’est le point de départ. En générant des informations en continu sur les changements et sur les terminaux qui se connectent et se déconnectent vous disposerez de la visibilité requise sur la durée. 
+2. Appliquer des politiques précises qui définissent les règles d'accès des terminaux, quels que soient l’utilisateur, le type de terminal ou le point d'accès – cette étape assure l'expérience utilisateur attendue. Les entreprises doivent s’adapter à l'évolution incessante des terminaux et de leurs usages, y compris smartphones, caméras de surveillance, etc. 
+3. Protéger les ressources en appliquant des contrôles de politiques dynamiques et en luttant contre les menaces en temps réel s'appliquant également aux systèmes tiers. C'est la dernière pièce du puzzle. Être préparé pour un événement réseau inhabituel à trois heures du matin exige une approche unifiée capable de bloquer certains flux de trafic et de modifier l’état de connexion d’un terminal.
+
+ 
+Conducteur de mobilité :
+
+ 
+ 
+Annexe 5 : UBT 
+Le tunneling basé sur l'utilisateur utilise GRE pour canaliser le trafic entrant sur une interface de commutateur vers une passerelle de mobilité pour un traitement ultérieur. Le tunneling basé sur l'utilisateur permet à une passerelle de mobilité de fournir une politique de sécurité centralisée, en utilisant l'authentification par utilisateur et le contrôle d'accès pour garantir un accès et des autorisations cohérents.
+Les applications du tunneling basé sur l'utilisateur incluent :
+Segmentation du trafic : permet de diviser le trafic en fonction des informations d'identification de l'utilisateur plutôt que du port physique auquel un utilisateur est connecté. Par exemple, les invités d'un réseau d'entreprise peuvent être affectés à un VLAN spécifique avec des politiques d'accès et de pare-feu définies pour protéger le réseau. Le trafic provenant des ordinateurs/portables peut être canalisé, tout en permettant au trafic VoIP de circuler librement sur le réseau câblé.
+Authentification des périphériques PoE : de nombreux périphériques nécessitant une alimentation par Ethernet (PoE) et un accès réseau, tels que les caméras de sécurité, les lecteurs de cartes de paiement et les appareils médicaux, ne disposent pas de logiciel de sécurité intégré. Par conséquent, ces périphériques peuvent présenter un risque pour les réseaux. La tunnellisation basée sur l'utilisateur peut authentifier ces périphériques et canaliser leur trafic vers une passerelle de mobilité, en exploitant les capacités du pare-feu et des politiques pour sécuriser le réseau.
+Au niveau le plus élémentaire, le tunneling basé sur l'utilisateur comporte deux composants :
+Les rôles utilisateur font référence à la possibilité d'attribuer des rôles, à la volée, à un périphérique/utilisateur câblé, en fonction d'éléments tels que la méthode d'accès d'un client. Lorsque vous utilisez ClearPass, un contexte supplémentaire peut être ajouté, tel que l'heure du jour et le type de machine. Par conséquent, le personnel informatique n'a plus besoin de préconfigurer un port d'accès au VLAN et aux liaisons montantes.
+Le tunneling est la capacité de canaliser le trafic vers une passerelle de mobilité Aruba (anciennement appelée nœud tunnelisé).
+Le tunneling basé sur l'utilisateur prend en charge deux types de déploiements de passerelle :
+Prise en charge de la passerelle autonome
+Prise en charge de la passerelle en cluster
+
+ 
+
+
+Glossaires :
+Résumé 
+Remerciements
+Lexique:
+Introduction :
+Présentations de l’entreprise d’accueil:
+Réaux informatique de l’entreprise :
+Explication de l’infrastructure réseau de l’entreprise :
+Mission et activité :
+Enjeux et Défis de la Mission :
+Conclusion :
+Bibliographie
+Annexes
